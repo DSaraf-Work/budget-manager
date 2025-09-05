@@ -17,9 +17,12 @@ export default function Home() {
               <a href="#security" className="text-gray-500 hover:text-gray-900">Security</a>
             </nav>
             <div className="flex items-center space-x-4">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+              <a href="/auth/login" className="text-gray-500 hover:text-gray-900 text-sm font-medium">
+                Sign In
+              </a>
+              <a href="/auth/signup" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
                 Get Started
-              </button>
+              </a>
             </div>
           </div>
         </div>
@@ -38,14 +41,14 @@ export default function Home() {
           </p>
           <div className="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8">
             <div className="rounded-md shadow">
-              <button className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 md:py-4 md:text-lg md:px-10">
-                Connect Gmail
-              </button>
+              <a href="/auth/signup" className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 md:py-4 md:text-lg md:px-10">
+                Get Started Free
+              </a>
             </div>
             <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
-              <button className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-600 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10">
-                Learn More
-              </button>
+              <a href="/auth/login" className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-600 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10">
+                Sign In
+              </a>
             </div>
           </div>
         </div>
