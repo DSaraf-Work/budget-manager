@@ -4,19 +4,20 @@ import { useState } from 'react'
 import { GmailConnection } from '@/components/gmail/GmailConnection'
 import { SyncStatus } from '@/components/sync/SyncStatus'
 import { SyncButton } from '@/components/gmail/SyncButton'
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 import { Button } from '@/components/ui/Button'
-import { 
-  TrendingUp, 
-  Settings, 
-  Mail, 
-  RefreshCw, 
+import {
+  TrendingUp,
+  Settings,
+  Mail,
+  RefreshCw,
   Shield,
   Bell,
   User
 } from 'lucide-react'
 import Link from 'next/link'
 
-export default function SettingsPage() {
+function SettingsContent() {
   const [activeTab, setActiveTab] = useState<'gmail' | 'sync' | 'notifications' | 'account'>('gmail')
 
   const tabs = [
@@ -242,5 +243,13 @@ export default function SettingsPage() {
         </div>
       </main>
     </div>
+  )
+}
+
+export default function SettingsPage() {
+  return (
+    <ProtectedRoute>
+      <SettingsContent />
+    </ProtectedRoute>
   )
 }

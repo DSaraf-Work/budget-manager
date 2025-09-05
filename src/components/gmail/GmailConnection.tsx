@@ -28,8 +28,11 @@ export function GmailConnection({ onConnectionChange }: GmailConnectionProps) {
     try {
       setLoading(true)
       const { data: { user } } = await supabase.auth.getUser()
-      
-      if (!user) return
+
+      if (!user) {
+        setIsConnected(false)
+        return
+      }
 
       // Check if user has Gmail tokens
       const { data, error } = await supabase
@@ -39,7 +42,15 @@ export function GmailConnection({ onConnectionChange }: GmailConnectionProps) {
         .single()
 
       if (error) {
-        console.error('Error checking Gmail connection:', error)
+        // If user record doesn't exist or other error, assume not connected
+        if (error.code === 'PGRST116') {
+          // No rows returned - user record doesn't exist yet
+          console.log('User record not found, Gmail not connected')
+        } else {
+          console.error('Error checking Gmail connection:', error.message || error)
+        }
+        setIsConnected(false)
+        onConnectionChange?.(false)
         return
       }
 
@@ -47,7 +58,9 @@ export function GmailConnection({ onConnectionChange }: GmailConnectionProps) {
       setIsConnected(connected)
       onConnectionChange?.(connected)
     } catch (error) {
-      console.error('Error checking Gmail connection:', error)
+      console.error('Error checking Gmail connection:', error instanceof Error ? error.message : error)
+      setIsConnected(false)
+      onConnectionChange?.(false)
     } finally {
       setLoading(false)
     }

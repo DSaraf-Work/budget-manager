@@ -3,18 +3,19 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { TransactionList } from '@/components/transactions/TransactionList'
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 import { Button } from '@/components/ui/Button'
 import { Alert } from '@/components/ui/Alert'
-import { 
-  TrendingUp, 
-  RefreshCw, 
-  Settings, 
+import {
+  TrendingUp,
+  RefreshCw,
+  Settings,
   Download,
   Filter,
   Plus
 } from 'lucide-react'
 
-export default function TransactionsPage() {
+function TransactionsContent() {
   const [activeTab, setActiveTab] = useState<'review' | 'saved' | 'ignored'>('review')
   const [stats, setStats] = useState({
     review: 0,
@@ -241,5 +242,13 @@ export default function TransactionsPage() {
         <TransactionList status={activeTab} />
       </main>
     </div>
+  )
+}
+
+export default function TransactionsPage() {
+  return (
+    <ProtectedRoute>
+      <TransactionsContent />
+    </ProtectedRoute>
   )
 }

@@ -1,43 +1,49 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import { User } from '@supabase/supabase-js'
+import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { GmailConnection } from '@/components/gmail/GmailConnection'
 import { SyncButton } from '@/components/gmail/SyncButton'
-import { TrendingUp, Mail, Settings, LogOut, Eye, RefreshCw } from 'lucide-react'
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
+import { useAuth } from '@/components/providers/AuthProvider'
+import { TrendingUp, Mail, Settings, LogOut, Eye, RefreshCw, Clock } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
-export default function DashboardPage() {
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
+function DashboardContent() {
   const [gmailConnected, setGmailConnected] = useState(false)
+  const { user, signOut, sessionExpiry, refreshSession } = useAuth()
   const router = useRouter()
-  const supabase = createClient()
-
-  useEffect(() => {
-    const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      setUser(user)
-      setLoading(false)
-    }
-
-    getUser()
-  }, [supabase.auth])
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut()
+    await signOut()
     router.push('/')
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-      </div>
-    )
+  const handleRefreshSession = async () => {
+    const success = await refreshSession()
+    if (success) {
+      console.log('Session refreshed successfully')
+    } else {
+      console.error('Failed to refresh session')
+    }
+  }
+
+  // Format session expiry time
+  const formatTimeUntilExpiry = (timeUntilExpiry: number | null) => {
+    if (!timeUntilExpiry) return 'Unknown'
+
+    const hours = Math.floor(timeUntilExpiry / (1000 * 60 * 60))
+    const minutes = Math.floor((timeUntilExpiry % (1000 * 60 * 60)) / (1000 * 60))
+
+    if (hours > 24) {
+      const days = Math.floor(hours / 24)
+      return `${days} day${days !== 1 ? 's' : ''}`
+    } else if (hours > 0) {
+      return `${hours}h ${minutes}m`
+    } else {
+      return `${minutes}m`
+    }
   }
 
   return (
@@ -54,9 +60,26 @@ export default function DashboardPage() {
               <span className="text-sm text-gray-700">
                 Welcome, {user?.user_metadata?.full_name || user?.email}
               </span>
-              <Button variant="ghost" size="sm">
-                <Settings className="h-4 w-4" />
-              </Button>
+
+              {/* Session Status */}
+              <div className="flex items-center space-x-2 text-xs text-gray-500">
+                <Clock className="h-3 w-3" />
+                <span>Session: {formatTimeUntilExpiry(sessionExpiry.timeUntilExpiry)}</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleRefreshSession}
+                  className="text-xs px-2 py-1"
+                >
+                  Refresh
+                </Button>
+              </div>
+
+              <Link href="/settings">
+                <Button variant="ghost" size="sm">
+                  <Settings className="h-4 w-4" />
+                </Button>
+              </Link>
               <Button variant="ghost" size="sm" onClick={handleSignOut}>
                 <LogOut className="h-4 w-4" />
               </Button>
@@ -137,13 +160,33 @@ export default function DashboardPage() {
               <p>✅ Gmail OAuth Integration</p>
               <p>✅ Transaction Extraction</p>
               <p>✅ Review Dashboard</p>
+              <p>✅ Persistent Session Management</p>
             </div>
             <p className="text-green-600 mt-3">
               Ready for Phase 2: User Features & Insights
             </p>
           </div>
+
+          {/* Session Information */}
+          <div className="mt-4 bg-blue-50 border border-blue-200 rounded-md p-4">
+            <h3 className="text-blue-800 font-medium mb-2">Session Information</h3>
+            <div className="text-blue-600 text-sm space-y-1">
+              <p>User: {user?.email}</p>
+              <p>Session expires in: {formatTimeUntilExpiry(sessionExpiry.timeUntilExpiry)}</p>
+              <p>Auto-refresh: Enabled</p>
+              <p>Persistent storage: Active</p>
+            </div>
+          </div>
         </div>
       </main>
     </div>
+  )
+}
+
+export default function DashboardPage() {
+  return (
+    <ProtectedRoute>
+      <DashboardContent />
+    </ProtectedRoute>
   )
 }

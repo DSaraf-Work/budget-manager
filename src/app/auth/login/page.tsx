@@ -3,9 +3,10 @@
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { AuthForm } from '@/components/auth/AuthForm'
+import { PublicRoute } from '@/components/auth/ProtectedRoute'
 import { TrendingUp } from 'lucide-react'
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter()
 
   const handleSuccess = () => {
@@ -20,6 +21,9 @@ export default function LoginPage() {
             <TrendingUp className="h-12 w-12 text-blue-600" />
           </div>
           <h1 className="mt-4 text-2xl font-bold text-gray-900">Budget Manager</h1>
+          <p className="mt-2 text-sm text-gray-600">
+            Sign in to your account with persistent session
+          </p>
         </div>
 
         <AuthForm mode="login" onSuccess={handleSuccess} />
@@ -34,5 +38,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <PublicRoute>
+      <LoginContent />
+    </PublicRoute>
   )
 }

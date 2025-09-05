@@ -6,7 +6,12 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:e2e": "playwright test",
+    "test:session": "playwright test tests/e2e/session-persistence.spec.ts",
+    "test:session-full": "./scripts/test-session-persistence.sh",
+    "test:landing": "playwright test tests/e2e/landing-page-auth.spec.ts",
+    "playwright:install": "playwright install"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.7",

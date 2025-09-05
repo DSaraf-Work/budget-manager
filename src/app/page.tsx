@@ -1,6 +1,11 @@
-import { Mail, TrendingUp, Shield, Zap } from "lucide-react";
+'use client'
+
+import { Mail, TrendingUp, Shield, Zap, User, LogIn } from "lucide-react";
+import { useAuth } from '@/components/providers/AuthProvider';
+import Link from 'next/link';
 
 export default function Home() {
+  const { user, loading, isAuthenticated } = useAuth();
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Header */}
@@ -12,17 +17,50 @@ export default function Home() {
               <span className="ml-2 text-xl font-bold text-gray-900">Budget Manager</span>
             </div>
             <nav className="hidden md:flex space-x-8">
-              <a href="#features" className="text-gray-500 hover:text-gray-900">Features</a>
-              <a href="#how-it-works" className="text-gray-500 hover:text-gray-900">How it Works</a>
-              <a href="#security" className="text-gray-500 hover:text-gray-900">Security</a>
+              <a href="#features" className="text-gray-500 hover:text-gray-900 transition-colors">Features</a>
+              <a href="#how-it-works" className="text-gray-500 hover:text-gray-900 transition-colors">How it Works</a>
+              <a href="#security" className="text-gray-500 hover:text-gray-900 transition-colors">Security</a>
             </nav>
-            <div className="flex items-center space-x-4">
-              <a href="/auth/login" className="text-gray-500 hover:text-gray-900 text-sm font-medium">
-                Sign In
-              </a>
-              <a href="/auth/signup" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
-                Get Started
-              </a>
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              {loading ? (
+                // Loading state to prevent UI flicker
+                <div className="flex items-center space-x-2 sm:space-x-4">
+                  <div className="h-4 w-12 sm:w-16 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-8 w-16 sm:w-20 bg-gray-200 rounded animate-pulse"></div>
+                </div>
+              ) : isAuthenticated ? (
+                // Authenticated user UI
+                <div className="flex items-center space-x-2 sm:space-x-4">
+                  <div className="flex items-center space-x-1 sm:space-x-2 text-gray-700">
+                    <User className="h-4 w-4" />
+                    <span className="text-xs sm:text-sm font-medium truncate max-w-24 sm:max-w-none" title={user?.user_metadata?.full_name || user?.email || 'User'}>
+                      {user?.user_metadata?.full_name || user?.email || 'User'}
+                    </span>
+                  </div>
+                  <Link
+                    href="/dashboard"
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors"
+                  >
+                    Dashboard
+                  </Link>
+                </div>
+              ) : (
+                // Unauthenticated user UI
+                <>
+                  <Link
+                    href="/auth/login"
+                    className="text-gray-500 hover:text-gray-900 text-xs sm:text-sm font-medium transition-colors"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    href="/auth/signup"
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors"
+                  >
+                    Get Started
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -32,24 +70,76 @@ export default function Home() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center">
           <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
-            <span className="block">Smart Personal</span>
-            <span className="block text-blue-600">Finance Tracking</span>
+            {isAuthenticated ? (
+              <>
+                <span className="block">Welcome back,</span>
+                <span className="block text-blue-600">
+                  {user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'User'}!
+                </span>
+              </>
+            ) : (
+              <>
+                <span className="block">Smart Personal</span>
+                <span className="block text-blue-600">Finance Tracking</span>
+              </>
+            )}
           </h1>
           <p className="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-            Automatically extract and categorize your expenses from Gmail.
-            Get intelligent insights into your spending patterns with zero manual data entry.
+            {isAuthenticated ? (
+              "Continue managing your finances with intelligent transaction tracking and insights from your Gmail account."
+            ) : (
+              "Automatically extract and categorize your expenses from Gmail. Get intelligent insights into your spending patterns with zero manual data entry."
+            )}
           </p>
           <div className="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8">
-            <div className="rounded-md shadow">
-              <a href="/auth/signup" className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 md:py-4 md:text-lg md:px-10">
-                Get Started Free
-              </a>
-            </div>
-            <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
-              <a href="/auth/login" className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-600 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10">
-                Sign In
-              </a>
-            </div>
+            {loading ? (
+              // Loading state for hero buttons
+              <div className="flex space-x-3">
+                <div className="h-12 w-32 bg-gray-200 rounded-md animate-pulse"></div>
+                <div className="h-12 w-32 bg-gray-200 rounded-md animate-pulse"></div>
+              </div>
+            ) : isAuthenticated ? (
+              // Authenticated user hero buttons
+              <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
+                <div className="rounded-md shadow">
+                  <Link
+                    href="/dashboard"
+                    className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 md:py-4 md:text-lg md:px-10 transition-colors"
+                  >
+                    Go to Dashboard
+                  </Link>
+                </div>
+                <div className="rounded-md shadow">
+                  <Link
+                    href="/transactions"
+                    className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-600 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10 transition-colors"
+                  >
+                    View Transactions
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              // Unauthenticated user hero buttons
+              <>
+                <div className="rounded-md shadow">
+                  <Link
+                    href="/auth/signup"
+                    className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 md:py-4 md:text-lg md:px-10 transition-colors"
+                  >
+                    Get Started Free
+                  </Link>
+                </div>
+                <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
+                  <Link
+                    href="/auth/login"
+                    className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-600 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10 transition-colors"
+                  >
+                    <LogIn className="h-5 w-5 mr-2" />
+                    Sign In
+                  </Link>
+                </div>
+              </>
+            )}
           </div>
         </div>
 
