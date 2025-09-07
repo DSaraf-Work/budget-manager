@@ -82,9 +82,16 @@ export function Navigation() {
       description: 'Manage your transactions',
       icon: '💳',
       requiresAuth: true
+    },
+    {
+      href: '/settings',
+      label: 'Settings',
+      description: 'Account settings and integrations',
+      icon: '⚙️',
+      requiresAuth: true
     }
     // Note: Additional features will be added as they are implemented
-    // - Budgets, Categories, Reports, Profile coming soon
+    // - Budgets, Categories, Reports coming soon
   ]
 
   // ============================================================================
