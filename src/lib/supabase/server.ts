@@ -95,7 +95,7 @@ export async function createApiClient() {
         detectSessionInUrl: false, // Don't detect in API routes
         flowType: 'pkce',
         storageKey: 'budget-manager-auth',
-        debug: process.env.NODE_ENV === 'development',
+        debug: false, // Debug mode disabled to reduce console noise
       },
     }
   )

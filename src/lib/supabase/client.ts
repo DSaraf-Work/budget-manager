@@ -20,8 +20,8 @@ export function createClient() {
       storageKey: 'budget-manager-auth',
       // Use PKCE flow for better security
       flowType: 'pkce',
-      // Debug mode for development
-      debug: process.env.NODE_ENV === 'development',
+      // Debug mode disabled to reduce console noise
+      debug: false,
     },
     global: {
       headers: {
