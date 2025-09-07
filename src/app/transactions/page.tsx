@@ -80,113 +80,25 @@ export default function TransactionsPage() {
           </div>
         </div>
 
-        {/* Transactions List */}
+        {/* Transactions List - Empty State */}
         <div className="bg-white rounded-lg shadow-sm border">
           <div className="px-6 py-4 border-b">
             <h2 className="text-lg font-semibold text-gray-900">
-              Recent Transactions
+              Your Transactions
             </h2>
           </div>
-          <div className="divide-y divide-gray-200">
-            {[
-              { 
-                id: 1, 
-                icon: '🛒', 
-                name: 'Whole Foods Market', 
-                category: 'Food & Dining',
-                amount: -85.50, 
-                date: '2025-09-07',
-                time: '2:30 PM'
-              },
-              { 
-                id: 2, 
-                icon: '⛽', 
-                name: 'Shell Gas Station', 
-                category: 'Transportation',
-                amount: -45.00, 
-                date: '2025-09-06',
-                time: '8:15 AM'
-              },
-              { 
-                id: 3, 
-                icon: '💼', 
-                name: 'Salary Deposit', 
-                category: 'Income',
-                amount: 3200.00, 
-                date: '2025-09-05',
-                time: '12:00 PM'
-              },
-              { 
-                id: 4, 
-                icon: '☕', 
-                name: 'Starbucks Coffee', 
-                category: 'Food & Dining',
-                amount: -12.50, 
-                date: '2025-09-04',
-                time: '9:45 AM'
-              },
-              { 
-                id: 5, 
-                icon: '🎬', 
-                name: 'Netflix Subscription', 
-                category: 'Entertainment',
-                amount: -15.99, 
-                date: '2025-09-03',
-                time: '11:30 PM'
-              },
-            ].map((transaction) => (
-              <div key={transaction.id} className="px-6 py-4 hover:bg-gray-50">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <div className="text-2xl mr-4">{transaction.icon}</div>
-                    <div>
-                      <p className="font-medium text-gray-900">{transaction.name}</p>
-                      <div className="flex items-center text-sm text-gray-500">
-                        <span className="bg-gray-100 px-2 py-1 rounded-full text-xs mr-2">
-                          {transaction.category}
-                        </span>
-                        <span>{transaction.date} at {transaction.time}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className={`text-lg font-semibold ${
-                      transaction.amount > 0 ? 'text-green-600' : 'text-red-600'
-                    }`}>
-                      {transaction.amount > 0 ? '+' : ''}${Math.abs(transaction.amount).toFixed(2)}
-                    </div>
-                    <button className="text-sm text-blue-600 hover:text-blue-800">
-                      Edit
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          {/* Pagination */}
-          <div className="px-6 py-4 border-t bg-gray-50">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-gray-700">
-                Showing 1 to 5 of 47 transactions
+          <div className="p-6">
+            <div className="text-center py-16">
+              <div className="text-8xl mb-6">💳</div>
+              <h3 className="text-xl font-medium text-gray-900 mb-3">
+                No transactions found
+              </h3>
+              <p className="text-gray-500 mb-8 max-w-md mx-auto">
+                You haven't added any transactions yet. Start tracking your income and expenses by adding your first transaction.
               </p>
-              <div className="flex space-x-2">
-                <button className="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100">
-                  Previous
-                </button>
-                <button className="px-3 py-1 bg-blue-600 text-white rounded text-sm">
-                  1
-                </button>
-                <button className="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100">
-                  2
-                </button>
-                <button className="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100">
-                  3
-                </button>
-                <button className="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100">
-                  Next
-                </button>
-              </div>
+              <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                Add Your First Transaction
+              </button>
             </div>
           </div>
         </div>

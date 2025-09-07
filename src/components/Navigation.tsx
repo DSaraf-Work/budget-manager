@@ -82,35 +82,9 @@ export function Navigation() {
       description: 'Manage your transactions',
       icon: '💳',
       requiresAuth: true
-    },
-    {
-      href: '/budgets',
-      label: 'Budgets',
-      description: 'Create and track budgets',
-      icon: '💰',
-      requiresAuth: true
-    },
-    {
-      href: '/categories',
-      label: 'Categories',
-      description: 'Organize your expenses',
-      icon: '🏷️',
-      requiresAuth: true
-    },
-    {
-      href: '/reports',
-      label: 'Reports',
-      description: 'Financial insights and analytics',
-      icon: '📈',
-      requiresAuth: true
-    },
-    {
-      href: '/profile',
-      label: 'Profile',
-      description: 'Account settings and preferences',
-      icon: '👤',
-      requiresAuth: true
     }
+    // Note: Additional features will be added as they are implemented
+    // - Budgets, Categories, Reports, Profile coming soon
   ]
 
   // ============================================================================
@@ -194,7 +168,7 @@ export function Navigation() {
           Budget Manager Navigation
         </h2>
         <p className="text-gray-600">
-          {user ? `Welcome back, ${user.email}!` : 'Explore all available features'}
+          {user ? `Welcome back, ${user.email}!` : 'Explore the implemented features'}
         </p>
         
         {/* Authentication Status */}
@@ -244,7 +218,10 @@ export function Navigation() {
           {/* Development Info */}
           <div className="mt-4 pt-4 border-t border-blue-200">
             <p className="text-blue-700 text-xs">
-              🔧 Development Mode - All features available for testing
+              🔧 Development Mode - Core features implemented (Dashboard, Transactions, Authentication)
+            </p>
+            <p className="text-blue-600 text-xs mt-1">
+              📋 Coming Soon: Budgets, Categories, Reports, Profile Management
             </p>
           </div>
         </div>
