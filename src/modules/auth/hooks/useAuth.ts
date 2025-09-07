@@ -209,7 +209,7 @@ export function useAuth() {
           setUser(user)
         }
       } catch (error) {
-        console.error('Error initializing auth:', error)
+        console.warn('Auth initialization (expected if not logged in):', error)
         if (mounted) {
           setUser(null)
         }

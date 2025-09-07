@@ -21,7 +21,16 @@ import { getAuthErrorMessage, classifyAuthError } from '../utils/errors'
  * for components to interact with Supabase Auth.
  */
 export class AuthService {
-  private supabase = createClient()
+  private supabase: ReturnType<typeof createClient>
+
+  constructor() {
+    try {
+      this.supabase = createClient()
+    } catch (error) {
+      console.error('Failed to initialize Supabase client:', error)
+      throw error
+    }
+  }
 
   /**
    * Signs in a user with email and password

@@ -1,42 +1,46 @@
+import { Navigation } from '@/components/Navigation'
+
 export default function HomePage() {
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="max-w-md mx-auto text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          Budget Manager
-        </h1>
-        <p className="text-lg text-gray-600 mb-8">
-          Your personal finance management application
-        </p>
-        <div className="space-y-4">
-          <div className="p-4 bg-white rounded-lg shadow-sm border">
-            <h2 className="text-lg font-semibold text-green-600 mb-2">
-              ✅ Next.js Frontend
-            </h2>
-            <p className="text-sm text-gray-600">
-              React 19 + TypeScript + Tailwind CSS
-            </p>
-          </div>
-          <div className="p-4 bg-white rounded-lg shadow-sm border">
-            <h2 className="text-lg font-semibold text-blue-600 mb-2">
-              🔄 Node.js Backend
-            </h2>
-            <p className="text-sm text-gray-600">
-              API Routes + Server Components
-            </p>
-          </div>
-          <div className="p-4 bg-white rounded-lg shadow-sm border">
-            <h2 className="text-lg font-semibold text-purple-600 mb-2">
-              🗄️ Supabase Database
-            </h2>
-            <p className="text-sm text-gray-600">
-              PostgreSQL + Real-time + Auth
-            </p>
+    <div className="min-h-screen bg-gray-50">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-br from-blue-600 to-purple-700 text-white py-16">
+        <div className="max-w-4xl mx-auto text-center px-6">
+          <h1 className="text-5xl font-bold mb-4">
+            Budget Manager
+          </h1>
+          <p className="text-xl text-blue-100 mb-8">
+            Your comprehensive personal finance management solution
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+              <div className="text-3xl mb-3">✅</div>
+              <h3 className="text-lg font-semibold mb-2">Next.js Frontend</h3>
+              <p className="text-blue-100 text-sm">
+                React 19 + TypeScript + Tailwind CSS
+              </p>
+            </div>
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+              <div className="text-3xl mb-3">🔄</div>
+              <h3 className="text-lg font-semibold mb-2">Node.js Backend</h3>
+              <p className="text-blue-100 text-sm">
+                API Routes + Server Components
+              </p>
+            </div>
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+              <div className="text-3xl mb-3">🗄️</div>
+              <h3 className="text-lg font-semibold mb-2">Supabase Database</h3>
+              <p className="text-blue-100 text-sm">
+                PostgreSQL + Real-time + Auth
+              </p>
+            </div>
           </div>
         </div>
-        <p className="text-sm text-gray-500 mt-8">
-          Ready to implement features modularly!
-        </p>
+      </div>
+
+      {/* Navigation Section */}
+      <div className="py-12">
+        <Navigation />
       </div>
     </div>
   );

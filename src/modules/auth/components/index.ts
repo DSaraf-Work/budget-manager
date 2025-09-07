@@ -8,3 +8,4 @@
 export { AuthInput } from './AuthInput'
 export { AuthButton } from './AuthButton'
 export { LoginForm } from './LoginForm'
+export { SignupForm } from './SignupForm'
