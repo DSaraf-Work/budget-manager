@@ -9,16 +9,12 @@ export const createClient = () =>
       auth: {
         // Enable persistent sessions
         persistSession: true,
-        // Store session in localStorage for persistence across browser restarts
-        storage: typeof window !== 'undefined' ? window.localStorage : undefined,
         // Automatically refresh tokens before expiration
         autoRefreshToken: true,
         // Detect session in URL (for OAuth callbacks)
         detectSessionInUrl: true,
-        // Extended session duration (30 days)
+        // Use PKCE flow for better security
         flowType: 'pkce',
-        // Custom storage key to avoid conflicts
-        storageKey: 'budget-manager-auth-token',
       },
       global: {
         headers: {

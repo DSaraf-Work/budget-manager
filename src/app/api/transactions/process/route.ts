@@ -5,8 +5,8 @@ import { getUserProfile } from '@/lib/database'
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient()
-    
+    const supabase = await createClient()
+
     // Get the current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     

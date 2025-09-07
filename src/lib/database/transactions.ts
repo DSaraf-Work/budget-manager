@@ -6,8 +6,8 @@ type TransactionInsert = Database['public']['Tables']['transactions']['Insert']
 type TransactionUpdate = Database['public']['Tables']['transactions']['Update']
 
 export async function createTransaction(transactionData: TransactionInsert): Promise<Transaction | null> {
-  const supabase = createClient()
-  
+  const supabase = await createClient()
+
   const { data, error } = await supabase
     .from('transactions')
     .insert(transactionData)
@@ -23,8 +23,8 @@ export async function createTransaction(transactionData: TransactionInsert): Pro
 }
 
 export async function getTransaction(id: string): Promise<Transaction | null> {
-  const supabase = createClient()
-  
+  const supabase = await createClient()
+
   const { data, error } = await supabase
     .from('transactions')
     .select('*')
@@ -45,7 +45,7 @@ export async function getTransactionsByUser(
   limit: number = 50,
   offset: number = 0
 ): Promise<Transaction[]> {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   let query = supabase
     .from('transactions')
@@ -72,7 +72,7 @@ export async function updateTransaction(
   id: string, 
   updates: TransactionUpdate
 ): Promise<Transaction | null> {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('transactions')
@@ -90,7 +90,7 @@ export async function updateTransaction(
 }
 
 export async function approveTransaction(id: string): Promise<boolean> {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { error } = await supabase
     .from('transactions')
@@ -109,7 +109,7 @@ export async function approveTransaction(id: string): Promise<boolean> {
 }
 
 export async function rejectTransaction(id: string): Promise<boolean> {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { error } = await supabase
     .from('transactions')
@@ -134,7 +134,7 @@ export async function getTransactionStats(userId: string): Promise<{
   ignored: number
   totalAmount: number
 }> {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('transactions')
@@ -177,7 +177,7 @@ export async function searchTransactions(
   searchTerm: string,
   limit: number = 50
 ): Promise<Transaction[]> {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('transactions')

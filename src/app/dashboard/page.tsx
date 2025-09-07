@@ -1,19 +1,37 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/Button'
-import { GmailConnection } from '@/components/gmail/GmailConnection'
+import { GmailConnectionsManager } from '@/components/gmail/GmailConnectionsManager'
 import { SyncButton } from '@/components/gmail/SyncButton'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 import { useAuth } from '@/components/providers/AuthProvider'
-import { TrendingUp, Mail, Settings, LogOut, Eye, RefreshCw, Clock } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { Alert } from '@/components/ui/Alert'
+import { TrendingUp, Mail, Settings, LogOut, Eye, RefreshCw, Clock, AlertTriangle } from 'lucide-react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
 function DashboardContent() {
   const [gmailConnected, setGmailConnected] = useState(false)
+  const [showGmailError, setShowGmailError] = useState(false)
   const { user, signOut, sessionExpiry, refreshSession } = useAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
+
+  // Check for Gmail OAuth errors
+  useEffect(() => {
+    const error = searchParams.get('error')
+    const details = searchParams.get('details')
+
+    if (error === 'token_exchange_failed' && details === 'refresh_token_missing') {
+      setShowGmailError(true)
+      // Clean up URL parameters
+      const url = new URL(window.location.href)
+      url.searchParams.delete('error')
+      url.searchParams.delete('details')
+      window.history.replaceState({}, '', url.toString())
+    }
+  }, [searchParams])
 
   const handleSignOut = async () => {
     await signOut()
@@ -97,9 +115,33 @@ function DashboardContent() {
           </p>
         </div>
 
-        {/* Gmail Connection */}
+        {/* Gmail OAuth Error Alert */}
+        {showGmailError && (
+          <div className="mb-8">
+            <Alert variant="error">
+              <AlertTriangle className="h-4 w-4" />
+              <div>
+                <h3 className="font-medium">Gmail Connection Failed</h3>
+                <p className="text-sm mt-1">
+                  Unable to get refresh token. This usually happens when you've connected Gmail before.
+                  Please follow the permission reset process below to reconnect.
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowGmailError(false)}
+                  className="mt-2"
+                >
+                  Dismiss
+                </Button>
+              </div>
+            </Alert>
+          </div>
+        )}
+
+        {/* Gmail Connections */}
         <div className="mb-8">
-          <GmailConnection onConnectionChange={setGmailConnected} />
+          <GmailConnectionsManager onConnectionChange={setGmailConnected} />
         </div>
 
         {/* Quick Actions */}

@@ -1,5 +1,6 @@
 // Database helper functions
 export * from './users'
+export * from './gmail-connections'
 export * from './gmail-messages'
 export * from './transactions'
 export * from './whitelisted-senders'

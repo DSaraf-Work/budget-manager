@@ -8,7 +8,7 @@ type WhitelistedSenderUpdate = Database['public']['Tables']['whitelisted_senders
 export async function createWhitelistedSender(
   senderData: WhitelistedSenderInsert
 ): Promise<WhitelistedSender | null> {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('whitelisted_senders')
@@ -25,7 +25,7 @@ export async function createWhitelistedSender(
 }
 
 export async function getWhitelistedSenders(userId: string): Promise<WhitelistedSender[]> {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('whitelisted_senders')
@@ -46,7 +46,7 @@ export async function updateWhitelistedSender(
   id: string, 
   updates: WhitelistedSenderUpdate
 ): Promise<WhitelistedSender | null> {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('whitelisted_senders')
@@ -64,7 +64,7 @@ export async function updateWhitelistedSender(
 }
 
 export async function deleteWhitelistedSender(id: string): Promise<boolean> {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { error } = await supabase
     .from('whitelisted_senders')
@@ -80,7 +80,7 @@ export async function deleteWhitelistedSender(id: string): Promise<boolean> {
 }
 
 export async function toggleSenderStatus(id: string, isActive: boolean): Promise<boolean> {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { error } = await supabase
     .from('whitelisted_senders')
@@ -102,7 +102,7 @@ export async function isSenderWhitelisted(
   userId: string, 
   senderEmail: string
 ): Promise<boolean> {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   // Extract domain from email
   const domain = senderEmail.split('@')[1]
@@ -152,7 +152,7 @@ export async function addDefaultWhitelistedSenders(userId: string): Promise<void
     { domain: 'adanielectricity.com', sender_name: 'Adani Electricity' },
   ]
 
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const insertData = defaultSenders.map(sender => ({
     user_id: userId,

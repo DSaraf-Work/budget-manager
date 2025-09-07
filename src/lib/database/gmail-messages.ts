@@ -6,7 +6,7 @@ type GmailMessageInsert = Database['public']['Tables']['gmail_messages']['Insert
 type GmailMessageUpdate = Database['public']['Tables']['gmail_messages']['Update']
 
 export async function createGmailMessage(messageData: GmailMessageInsert): Promise<GmailMessage | null> {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('gmail_messages')
@@ -23,7 +23,7 @@ export async function createGmailMessage(messageData: GmailMessageInsert): Promi
 }
 
 export async function getGmailMessage(messageId: string): Promise<GmailMessage | null> {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('gmail_messages')
@@ -44,7 +44,7 @@ export async function getGmailMessagesByUser(
   limit: number = 50,
   offset: number = 0
 ): Promise<GmailMessage[]> {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('gmail_messages')
@@ -65,7 +65,7 @@ export async function updateGmailMessage(
   id: string, 
   updates: GmailMessageUpdate
 ): Promise<GmailMessage | null> {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('gmail_messages')
@@ -86,7 +86,7 @@ export async function markMessageAsProcessed(
   messageId: string,
   status: 'processed' | 'failed' | 'skipped'
 ): Promise<boolean> {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { error } = await supabase
     .from('gmail_messages')
@@ -106,7 +106,7 @@ export async function markMessageAsProcessed(
 }
 
 export async function getUnprocessedMessages(userId: string): Promise<GmailMessage[]> {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('gmail_messages')
@@ -124,7 +124,7 @@ export async function getUnprocessedMessages(userId: string): Promise<GmailMessa
 }
 
 export async function checkMessageExists(messageId: string): Promise<boolean> {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('gmail_messages')

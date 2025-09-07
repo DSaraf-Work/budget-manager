@@ -45,7 +45,23 @@ export function AuthForm({ mode, onSuccess }: AuthFormProps) {
 
         if (data.user && !data.user.email_confirmed_at) {
           setMessage('Please check your email for a confirmation link.')
-        } else {
+        } else if (data.user) {
+          // Create user profile
+          try {
+            const profileResponse = await fetch('/api/auth/create-profile', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            })
+
+            if (!profileResponse.ok) {
+              console.warn('Failed to create user profile, but signup was successful')
+            }
+          } catch (profileError) {
+            console.warn('Error creating user profile:', profileError)
+          }
+
           onSuccess?.()
         }
       } else {

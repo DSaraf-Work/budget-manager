@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { GmailOAuth } from '@/lib/gmail/oauth'
-import { getUserProfile, updateUserProfile } from '@/lib/database'
+import { getGmailConnection, deactivateGmailConnection } from '@/lib/database/gmail-connections'
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient()
-    
+    const supabase = await createClient()
+
     // Get the current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     
@@ -17,37 +17,60 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Get user profile to access tokens
-    const userProfile = await getUserProfile(user.id)
-    
-    if (!userProfile) {
+    // Get connection ID from request body
+    const body = await request.json()
+    const { connectionId } = body
+
+    if (!connectionId) {
       return NextResponse.json(
-        { error: 'User profile not found' },
+        { error: 'Connection ID is required' },
+        { status: 400 }
+      )
+    }
+
+    // Get the Gmail connection
+    const connection = await getGmailConnection(connectionId)
+
+    if (!connection) {
+      return NextResponse.json(
+        { error: 'Gmail connection not found' },
         { status: 404 }
       )
     }
 
-    // Revoke Gmail access if tokens exist
-    if (userProfile.gmail_access_token) {
-      const gmailOAuth = new GmailOAuth()
-      await gmailOAuth.revokeAccess(userProfile.gmail_access_token)
+    // Verify the connection belongs to the current user
+    if (connection.user_id !== user.id) {
+      return NextResponse.json(
+        { error: 'Unauthorized to disconnect this Gmail account' },
+        { status: 403 }
+      )
     }
 
-    // Clear tokens from database
-    const success = await updateUserProfile(user.id, {
-      gmail_access_token: null,
-      gmail_refresh_token: null,
-      last_sync_at: null,
-    })
+    // Revoke Gmail access if tokens exist
+    if (connection.access_token) {
+      const gmailOAuth = new GmailOAuth()
+      const revoked = await gmailOAuth.revokeAccess(connection.access_token)
+
+      if (!revoked) {
+        console.warn(`Failed to revoke Gmail access token for connection ${connectionId}`)
+      }
+    }
+
+    // Deactivate the Gmail connection
+    const success = await deactivateGmailConnection(connectionId)
 
     if (!success) {
       return NextResponse.json(
-        { error: 'Failed to disconnect Gmail' },
+        { error: 'Failed to disconnect Gmail account' },
         { status: 500 }
       )
     }
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json({
+      success: true,
+      message: `Gmail account ${connection.gmail_email} disconnected successfully`,
+      disconnectedEmail: connection.gmail_email
+    })
   } catch (error) {
     console.error('Error disconnecting Gmail:', error)
     return NextResponse.json(

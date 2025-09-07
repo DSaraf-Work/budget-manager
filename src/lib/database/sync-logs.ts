@@ -6,7 +6,7 @@ type SyncLogInsert = Database['public']['Tables']['sync_logs']['Insert']
 type SyncLogUpdate = Database['public']['Tables']['sync_logs']['Update']
 
 export async function createSyncLog(syncData: SyncLogInsert): Promise<SyncLog | null> {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('sync_logs')
@@ -26,7 +26,7 @@ export async function updateSyncLog(
   id: string, 
   updates: SyncLogUpdate
 ): Promise<SyncLog | null> {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('sync_logs')
@@ -53,7 +53,7 @@ export async function completeSyncLog(
     error_message?: string
   }
 ): Promise<boolean> {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { error } = await supabase
     .from('sync_logs')
@@ -76,7 +76,7 @@ export async function getSyncLogs(
   userId: string,
   limit: number = 20
 ): Promise<SyncLog[]> {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('sync_logs')
@@ -94,7 +94,7 @@ export async function getSyncLogs(
 }
 
 export async function getLastSyncLog(userId: string): Promise<SyncLog | null> {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('sync_logs')
@@ -121,7 +121,7 @@ export async function getSyncStats(userId: string): Promise<{
   totalTransactions: number
   lastSyncAt: string | null
 }> {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('sync_logs')

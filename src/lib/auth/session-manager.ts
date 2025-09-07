@@ -30,6 +30,8 @@ export class SessionManager {
       switch (event) {
         case 'SIGNED_IN':
           this.startSessionMonitoring()
+          // Ensure user profile exists
+          this.ensureUserProfile(session)
           break
         case 'SIGNED_OUT':
           this.stopSessionMonitoring()
@@ -213,13 +215,9 @@ export class SessionManager {
    */
   private clearSessionData(): void {
     try {
-      // Clear Supabase auth data
-      localStorage.removeItem('budget-manager-auth-token')
-      
-      // Clear any other session-related data
-      sessionStorage.clear()
-      
-      console.log('Session data cleared')
+      // Let Supabase handle its own session cleanup
+      // Don't manually manage auth tokens
+      console.log('Session data cleared by Supabase')
     } catch (error) {
       console.error('Error clearing session data:', error)
     }
@@ -260,6 +258,95 @@ export class SessionManager {
     const timeUntilExpiry = (expiresAt - now) * 1000
 
     return { expiresAt, timeUntilExpiry }
+  }
+
+  /**
+   * Ensure user profile exists in database
+   */
+  private async ensureUserProfile(session: Session | null): Promise<void> {
+    if (!session?.user) return
+
+    try {
+      // Use the client-side Supabase instance to check if profile exists
+      const { data: existingProfile, error: checkError } = await this.supabase
+        .from('users')
+        .select('id')
+        .eq('id', session.user.id)
+        .single()
+
+      if (existingProfile) {
+        console.log('User profile already exists')
+        return
+      }
+
+      if (checkError && checkError.code !== 'PGRST116') {
+        console.warn('Error checking user profile:', checkError)
+        return
+      }
+
+      // Profile doesn't exist, try to create it via API
+      const response = await fetch('/api/auth/create-profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        console.log('User profile created successfully:', data)
+      } else {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
+        console.warn('Failed to create user profile:', response.status, errorData)
+
+        // If API fails, try direct client-side creation as fallback
+        if (response.status === 401) {
+          console.log('API authentication failed, trying direct client creation')
+          await this.createProfileDirectly(session.user)
+        }
+      }
+    } catch (error) {
+      console.warn('Error ensuring user profile:', error)
+
+      // Fallback: try direct client-side creation
+      try {
+        await this.createProfileDirectly(session.user)
+      } catch (fallbackError) {
+        console.error('Fallback profile creation also failed:', fallbackError)
+      }
+    }
+  }
+
+  /**
+   * Create user profile directly using client-side Supabase
+   */
+  private async createProfileDirectly(user: any): Promise<void> {
+    try {
+      const { data, error } = await this.supabase
+        .from('users')
+        .insert({
+          id: user.id,
+          email: user.email,
+          full_name: user.user_metadata?.full_name || null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .select()
+        .single()
+
+      if (error) {
+        if (error.code === '23505') {
+          console.log('User profile already exists (unique violation)')
+          return
+        }
+        throw error
+      }
+
+      console.log('User profile created directly:', data)
+    } catch (error) {
+      console.error('Direct profile creation failed:', error)
+      throw error
+    }
   }
 
   /**

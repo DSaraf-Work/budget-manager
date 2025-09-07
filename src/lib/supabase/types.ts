@@ -9,15 +9,65 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      gmail_connections: {
+        Row: {
+          id: string
+          user_id: string
+          gmail_email: string
+          access_token: string
+          refresh_token: string
+          expires_at: string | null
+          is_active: boolean | null
+          last_sync_at: string | null
+          sync_status: string | null
+          error_count: number | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          gmail_email: string
+          access_token: string
+          refresh_token: string
+          expires_at?: string | null
+          is_active?: boolean | null
+          last_sync_at?: string | null
+          sync_status?: string | null
+          error_count?: number | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          gmail_email?: string
+          access_token?: string
+          refresh_token?: string
+          expires_at?: string | null
+          is_active?: boolean | null
+          last_sync_at?: string | null
+          sync_status?: string | null
+          error_count?: number | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gmail_connections_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       users: {
         Row: {
           id: string
           email: string
           full_name: string | null
           avatar_url: string | null
-          gmail_access_token: string | null
-          gmail_refresh_token: string | null
-          last_sync_at: string | null
           sync_frequency_hours: number | null
           is_active: boolean | null
           created_at: string | null
@@ -28,9 +78,6 @@ export interface Database {
           email: string
           full_name?: string | null
           avatar_url?: string | null
-          gmail_access_token?: string | null
-          gmail_refresh_token?: string | null
-          last_sync_at?: string | null
           sync_frequency_hours?: number | null
           is_active?: boolean | null
           created_at?: string | null
@@ -41,9 +88,6 @@ export interface Database {
           email?: string
           full_name?: string | null
           avatar_url?: string | null
-          gmail_access_token?: string | null
-          gmail_refresh_token?: string | null
-          last_sync_at?: string | null
           sync_frequency_hours?: number | null
           is_active?: boolean | null
           created_at?: string | null

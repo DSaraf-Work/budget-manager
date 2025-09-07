@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { GmailConnection } from '@/components/gmail/GmailConnection'
+import { GmailConnectionsManager } from '@/components/gmail/GmailConnectionsManager'
 import { SyncStatus } from '@/components/sync/SyncStatus'
 import { SyncButton } from '@/components/gmail/SyncButton'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
@@ -57,7 +57,7 @@ function SettingsContent() {
               <p className="text-sm text-gray-600 mb-6">
                 Connect your Gmail account to automatically extract transaction data from your emails.
               </p>
-              <GmailConnection />
+              <GmailConnectionsManager />
             </div>
 
             <div>
