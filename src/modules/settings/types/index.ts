@@ -50,11 +50,14 @@ export interface GmailMessage {
  */
 export interface EmailData {
   id: string
-  sender: string
-  subject: string
-  snippet: string
-  date: Date
   threadId: string
+  subject: string
+  from: string
+  to: string
+  date: string
+  snippet: string
+  body: string
+  attachments: any[]
 }
 
 /**
@@ -65,6 +68,8 @@ export interface EmailFilters {
   startDate?: Date
   endDate?: Date
   query?: string
+  page?: number
+  pageSize?: number
 }
 
 /**

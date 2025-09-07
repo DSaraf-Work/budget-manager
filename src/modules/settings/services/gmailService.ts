@@ -169,29 +169,33 @@ export class GmailService {
    * @returns Email fetch result
    */
   async fetchEmails(
-    filters: EmailFilters = {}, 
-    pageToken?: string
+    filters: EmailFilters = {}
   ): Promise<EmailFetchResponse> {
     try {
       const queryParams = new URLSearchParams()
-      
+
       if (filters.sender) {
         queryParams.append('sender', filters.sender)
       }
-      
+
       if (filters.startDate) {
         queryParams.append('startDate', filters.startDate.toISOString())
       }
-      
+
       if (filters.endDate) {
         queryParams.append('endDate', filters.endDate.toISOString())
       }
-      
-      if (pageToken) {
-        queryParams.append('pageToken', pageToken)
+
+      if (filters.page && typeof filters.page === 'number' && !isNaN(filters.page)) {
+        queryParams.append('page', filters.page.toString())
       }
 
-      const response = await fetch(`/api/gmail/emails?${queryParams.toString()}`)
+      if (filters.pageSize && typeof filters.pageSize === 'number' && !isNaN(filters.pageSize)) {
+        queryParams.append('pageSize', filters.pageSize.toString())
+      }
+
+      const headers = await this.getAuthHeaders()
+      const response = await fetch(`/api/gmail/emails?${queryParams.toString()}`, { headers })
       
       if (!response.ok) {
         const errorData = await response.json()
