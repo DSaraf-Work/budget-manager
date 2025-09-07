@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Budget Manager
 
-## Getting Started
+A modern personal finance management application built with Next.js, Node.js, and Supabase.
 
-First, run the development server:
+## 🏗️ Architecture
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Frontend**: Next.js 15 + React 19 + TypeScript + Tailwind CSS
+- **Backend**: Next.js API Routes (Node.js)
+- **Database**: Supabase (PostgreSQL)
+- **Authentication**: Supabase Auth
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Quick Start
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. **Set up environment variables**
+   ```bash
+   cp .env.local.example .env.local
+   ```
 
-## Learn More
+3. **Set up database schema**
+   - Go to your Supabase project dashboard
+   - Open SQL Editor
+   - Run the SQL from `database/schema/00_foundation.sql`
 
-To learn more about Next.js, take a look at the following resources:
+4. **Start development server**
+   ```bash
+   npm run dev
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+5. **Open your browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📁 Project Structure
 
-## Deploy on Vercel
+This project follows a **modular architecture** where features are implemented as separate, self-contained modules with `bm_` prefixed database tables.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🎯 Development Standards
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project follows strict development rules to ensure high-quality, well-tested code:
+
+- **📋 [Development Rules](docs/DEVELOPMENT_RULES.md)** - Comprehensive guidelines for all development work
+- **⚡ [Quick Reference](docs/QUICK_REFERENCE.md)** - Essential checklist for every feature
+- **🧪 [Testing Checklist](docs/TESTING_CHECKLIST.md)** - Template for thorough feature testing
+
+### Key Principles
+- **Always test thoroughly** before marking features complete
+- **Follow modular architecture** with clean separation of concerns
+- **Document everything** with meaningful comments and guides
+- **Maintain code quality** with consistent patterns and error handling
+
+## 🎯 Ready for Feature Implementation
+
+The foundation is complete! You can now implement features one by one following the modular approach and development standards.
