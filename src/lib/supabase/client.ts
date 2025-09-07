@@ -18,10 +18,20 @@ export function createClient() {
       detectSessionInUrl: true,
       // Storage key for session persistence
       storageKey: 'budget-manager-auth',
+      // Use PKCE flow for better security
+      flowType: 'pkce',
+      // Debug mode for development
+      debug: process.env.NODE_ENV === 'development',
     },
     global: {
       headers: {
         'X-Client-Info': 'budget-manager-web',
+      },
+    },
+    // Realtime configuration for better connection handling
+    realtime: {
+      params: {
+        eventsPerSecond: 10,
       },
     },
   })

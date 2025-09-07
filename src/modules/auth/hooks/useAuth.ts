@@ -155,21 +155,23 @@ export function useAuth() {
 
       const response = await authService.signOut()
 
-      if (!response.success) {
+      if (response.success) {
+        // User state will be updated by the auth state change listener
+        setUser(null)
+      } else {
         setError(response.error || 'Sign out failed')
       }
-      // User state will be updated by the auth state change listener
     } catch (error) {
       setError('An unexpected error occurred during sign out')
       console.error('Sign out error:', error)
     } finally {
       setLoading(false)
     }
-  }, [setLoading, clearError, setError])
+  }, [setLoading, clearError, setError, setUser])
 
   /**
    * Sends a password reset email
-   * 
+   *
    * @param email - User's email address
    */
   const resetPassword = useCallback(async (email: string): Promise<void> => {
@@ -191,6 +193,8 @@ export function useAuth() {
     }
   }, [setLoading, clearError, setError])
 
+
+
   // ============================================================================
   // INITIALIZATION AND CLEANUP
   // ============================================================================
@@ -201,10 +205,20 @@ export function useAuth() {
   useEffect(() => {
     let mounted = true
 
-    // Get initial user state
+    // Get initial user state with enhanced session handling
     const initializeAuth = async () => {
       try {
-        const user = await authService.getCurrentUser()
+        // First try to get current user
+        let user = await authService.getCurrentUser()
+
+        // If no user, try to get from session
+        if (!user) {
+          const sessionResult = await authService.getCurrentSession()
+          if (sessionResult.data.session?.user) {
+            user = sessionResult.data.session.user
+          }
+        }
+
         if (mounted) {
           setUser(user)
         }

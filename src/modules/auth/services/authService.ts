@@ -208,35 +208,115 @@ export class AuthService {
   }
 
   /**
-   * Gets the current session
-   * 
-   * @returns Promise with current session or null
+   * Gets the current session with enhanced persistence handling
+   *
+   * @returns Promise with current session data
    */
   async getCurrentSession() {
     try {
-      const { data: { session }, error } = await this.supabase.auth.getSession()
-      
-      if (error) {
-        console.error('Error getting current session:', error)
-        return null
+      // First attempt to get session
+      let result = await this.supabase.auth.getSession()
+
+      // If no session but we have stored auth data, try to refresh
+      if (!result.data.session && typeof window !== 'undefined') {
+        const storedSession = localStorage.getItem('budget-manager-auth')
+        if (storedSession) {
+          console.log('Attempting to refresh session from stored data')
+          // Attempt to refresh the session
+          const refreshResult = await this.supabase.auth.refreshSession()
+          if (refreshResult.data.session) {
+            result = refreshResult
+          }
+        }
       }
-      
-      return session
+
+      return result
     } catch (error) {
-      console.error('Error getting current session:', error)
-      return null
+      console.warn('Error getting current session:', error)
+      return {
+        data: { session: null },
+        error: error as any
+      }
     }
   }
 
   /**
-   * Sets up authentication state change listener
-   * 
+   * Sign out the current user
+   *
+   * @returns Promise with sign out response
+   */
+  async signOut(): Promise<AuthResponse> {
+    try {
+      const { error } = await this.supabase.auth.signOut()
+
+      if (error) {
+        return {
+          success: false,
+          error: getAuthErrorMessage(error)
+        }
+      }
+
+      // Clear local storage
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('budget-manager-auth')
+      }
+
+      return {
+        success: true,
+        message: 'Successfully signed out'
+      }
+    } catch (error) {
+      console.error('Error signing out:', error)
+      return {
+        success: false,
+        error: 'An unexpected error occurred during sign out'
+      }
+    }
+  }
+
+  /**
+   * Refresh the current session
+   *
+   * @returns Promise with refreshed session data
+   */
+  async refreshSession() {
+    try {
+      const result = await this.supabase.auth.refreshSession()
+      return result
+    } catch (error) {
+      console.error('Error refreshing session:', error)
+      return {
+        data: { session: null, user: null },
+        error: error as any
+      }
+    }
+  }
+
+  /**
+   * Sets up authentication state change listener with enhanced session handling
+   *
    * @param callback - Function to call when auth state changes
    * @returns Unsubscribe function
    */
   onAuthStateChange(callback: (user: any) => void) {
     const { data: { subscription } } = this.supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
+        console.log('Auth state change:', event, session?.user?.email || 'no user')
+
+        // Handle token refresh events
+        if (event === 'TOKEN_REFRESHED' && session) {
+          console.log('Token refreshed successfully')
+        }
+
+        // Handle sign out events
+        if (event === 'SIGNED_OUT') {
+          console.log('User signed out')
+          // Clear any stored session data
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('budget-manager-auth')
+          }
+        }
+
         callback(session?.user || null)
       }
     )

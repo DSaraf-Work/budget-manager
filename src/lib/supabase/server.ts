@@ -39,7 +39,58 @@ export async function createClient() {
         autoRefreshToken: true,
         detectSessionInUrl: true,
         flowType: 'pkce',
+        // Storage key for session persistence
+        storageKey: 'budget-manager-auth',
       },
     }
   )
+}
+
+/**
+ * Create a Supabase client for API routes with proper session handling
+ *
+ * This client is specifically designed for use in API routes where we need
+ * to access the authenticated user's session from cookies.
+ */
+export async function createApiClient() {
+  const cookieStore = await cookies()
+
+  const client = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll()
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) => {
+              // Set cookie with proper options for API routes
+              const cookieOptions = {
+                ...options,
+                maxAge: 15552000, // 6 months in seconds
+                httpOnly: false, // Allow client-side access for auth
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax' as const,
+                path: '/',
+              }
+              cookieStore.set(name, value, cookieOptions)
+            })
+          } catch (error) {
+            console.warn('Failed to set cookies in API route:', error)
+          }
+        },
+      },
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: false, // Don't detect in API routes
+        flowType: 'pkce',
+        storageKey: 'budget-manager-auth',
+      },
+    }
+  )
+
+  return client
 }

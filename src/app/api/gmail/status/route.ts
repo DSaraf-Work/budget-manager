@@ -6,23 +6,31 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createApiClient } from '@/lib/supabase/server'
 
 /**
  * GET /api/gmail/status
- * 
+ *
  * Returns Gmail connection status for the current user
  */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient()
-    
-    // Get current user
+    const supabase = await createApiClient()
+
+    // Get current user from session
     const { data: { user }, error: userError } = await supabase.auth.getUser()
-    
-    if (userError || !user) {
+
+    if (userError) {
+      console.warn('Auth error in Gmail status:', userError.message)
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { error: 'Authentication failed', details: userError.message },
+        { status: 401 }
+      )
+    }
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'No authenticated user found' },
         { status: 401 }
       )
     }

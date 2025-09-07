@@ -10,6 +10,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/modules/auth/hooks/useAuth'
+import { useRouter } from 'next/navigation'
 
 /**
  * Navigation link interface
@@ -30,8 +31,25 @@ interface NavLink {
  * with proper authentication state handling and responsive design.
  */
 export function Navigation() {
-  const { user, loading } = useAuth()
+  const { user, loading, signOut } = useAuth()
+  const router = useRouter()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  // ============================================================================
+  // LOGOUT HANDLER
+  // ============================================================================
+
+  /**
+   * Handle user logout
+   */
+  const handleSignOut = async () => {
+    try {
+      await signOut()
+      router.push('/login')
+    } catch (error) {
+      console.error('Error signing out:', error)
+    }
+  }
 
   // ============================================================================
   // NAVIGATION LINKS CONFIGURATION
@@ -179,19 +197,31 @@ export function Navigation() {
         </p>
         
         {/* Authentication Status */}
-        <div className="mt-4 inline-flex items-center px-3 py-1 rounded-full text-sm">
-          {loading ? (
-            <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full">
-              🔄 Checking authentication...
-            </span>
-          ) : user ? (
-            <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full">
-              ✅ Signed in as {user.email}
-            </span>
-          ) : (
-            <span className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full">
-              👤 Not signed in
-            </span>
+        <div className="mt-4 flex items-center justify-center gap-4">
+          <div className="inline-flex items-center px-3 py-1 rounded-full text-sm">
+            {loading ? (
+              <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full">
+                🔄 Checking authentication...
+              </span>
+            ) : user ? (
+              <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full">
+                ✅ Signed in as {user.email}
+              </span>
+            ) : (
+              <span className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full">
+                👤 Not signed in
+              </span>
+            )}
+          </div>
+
+          {/* Logout Button */}
+          {user && !loading && (
+            <button
+              onClick={handleSignOut}
+              className="text-sm text-red-600 hover:text-red-800 font-medium transition-colors px-3 py-1 rounded-lg hover:bg-red-50"
+            >
+              Sign Out
+            </button>
           )}
         </div>
       </div>
