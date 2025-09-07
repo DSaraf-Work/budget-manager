@@ -61,7 +61,13 @@ export async function createApiClient() {
     {
       cookies: {
         getAll() {
-          return cookieStore.getAll()
+          const allCookies = cookieStore.getAll()
+          console.log('🍪 Server getting cookies:', allCookies.map(c => ({
+            name: c.name,
+            hasValue: !!c.value,
+            length: c.value?.length || 0
+          })))
+          return allCookies
         },
         setAll(cookiesToSet) {
           try {
@@ -75,6 +81,7 @@ export async function createApiClient() {
                 sameSite: 'lax' as const,
                 path: '/',
               }
+              console.log('🍪 Server setting cookie:', { name, hasValue: !!value, options: cookieOptions })
               cookieStore.set(name, value, cookieOptions)
             })
           } catch (error) {
@@ -84,10 +91,11 @@ export async function createApiClient() {
       },
       auth: {
         persistSession: true,
-        autoRefreshToken: true,
+        autoRefreshToken: false, // Disable auto-refresh in API routes
         detectSessionInUrl: false, // Don't detect in API routes
         flowType: 'pkce',
         storageKey: 'budget-manager-auth',
+        debug: process.env.NODE_ENV === 'development',
       },
     }
   )

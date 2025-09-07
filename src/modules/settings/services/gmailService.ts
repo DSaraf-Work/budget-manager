@@ -58,37 +58,77 @@ export class GmailService {
   }
 
   /**
+   * Get auth headers for API requests
+   */
+  private async getAuthHeaders(): Promise<Record<string, string>> {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    }
+
+    // Try to get current session token
+    try {
+      if (typeof window !== 'undefined') {
+        // Get Supabase client
+        const { createClient } = await import('@/lib/supabase/client')
+        const supabase = createClient()
+
+        const { data: { session } } = await supabase.auth.getSession()
+        if (session?.access_token) {
+          headers['Authorization'] = `Bearer ${session.access_token}`
+          console.log('🔑 Added auth header to API request')
+        } else {
+          console.warn('⚠️ No session token available for API request')
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ Failed to get auth token for API request:', error)
+    }
+
+    return headers
+  }
+
+  /**
    * Exchange authorization code for tokens
-   * 
+   *
    * @param code - Authorization code from OAuth callback
    * @returns OAuth tokens
    */
   async exchangeCodeForTokens(code: string): Promise<GmailOAuthTokens> {
+    const headers = await this.getAuthHeaders()
+
+    console.log('🔄 Exchanging OAuth code for tokens...')
+
     const response = await fetch('/api/gmail/oauth/token', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers,
       body: JSON.stringify({ code })
     })
 
+    console.log('📡 OAuth token exchange response:', response.status, response.statusText)
+
     if (!response.ok) {
-      throw new Error('Failed to exchange code for tokens')
+      const errorData = await response.json().catch(() => ({}))
+      console.error('❌ OAuth token exchange failed:', errorData)
+      throw new Error(`Failed to exchange code for tokens: ${errorData.error || response.statusText}`)
     }
 
-    return response.json()
+    const result = await response.json()
+    console.log('✅ OAuth token exchange successful')
+    return result
   }
 
   /**
    * Get current connection status
-   * 
+   *
    * @returns Connection status
    */
   async getConnectionStatus(): Promise<GmailConnectionStatus> {
     try {
-      const response = await fetch('/api/gmail/status')
-      
+      const headers = await this.getAuthHeaders()
+      const response = await fetch('/api/gmail/status', { headers })
+
       if (!response.ok) {
+        console.warn('Gmail status check failed:', response.status, response.statusText)
         return { isConnected: false }
       }
 
